@@ -43,7 +43,7 @@ passport.use(new BasicStrategy( (username, password, done) => {
  
 
 app.get('/', (req, res) => {
-    res.send("hello")
+    res.send('/bci_graded_API')
 })
  
 app.post('/signup', (req, res) => {  
@@ -80,7 +80,9 @@ app.post('/signup', (req, res) => {
             }
         }  
         users.push(user) 
-        res.status(201).send(user) 
+        let tmp = Object.assign({}, user)
+        tmp.password = "****"
+        res.status(201).send(tmp)  
     } 
     catch (err) {
         res.status(422).send(err)
@@ -91,13 +93,14 @@ app.get('/posts', (req, res) => {
     res.status(200).send(posts)
 })
 
-app.get('/user/:userid', (req, res) => {
+app.get('/user/:userid', passport.authenticate('basic', { session: false}), (req, res) => {
     let result = users.some(user => user.id == req.params.userid)
     if (result) {  
-        for (const user of users) { 
-            console.log(user)
-            if (user.id == req.params.userid) { 
-                res.status(200).send(user) 
+        for (const user of users) {  
+            if (user.id == req.params.userid) {  
+                let tmp = Object.assign({}, user)
+                tmp.password = "****"
+                res.status(200).send(tmp) 
             }
         }  
     } else { 
@@ -139,8 +142,7 @@ app.post('/:userid/createPost', passport.authenticate('basic', { session: false}
                     contactInfo: user.contactInfo
                 }  
 
-                posts.push(newPost)
-                console.log(posts.length) 
+                posts.push(newPost) 
                 res.status(200).send("New post created\n")
                 break 
             }
