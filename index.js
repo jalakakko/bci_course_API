@@ -93,7 +93,7 @@ app.get('/posts', (req, res) => {
     res.status(200).send(posts)
 })
 
-app.get('/user/:userid', passport.authenticate('basic', { session: false}), (req, res) => {
+app.get('/users/:userid', passport.authenticate('basic', { session: false}), (req, res) => {
     let result = users.some(user => user.id == req.params.userid)
     if (result) {  
         for (const user of users) {  
@@ -104,7 +104,7 @@ app.get('/user/:userid', passport.authenticate('basic', { session: false}), (req
             }
         }  
     } else { 
-        res.status(422).send("User not found by that ID")
+        res.status(404).send("User not found by that ID")
     }
 })
 
@@ -148,7 +148,7 @@ app.post('/:userid/createPost', passport.authenticate('basic', { session: false}
             }
         }  
     } else { 
-        res.status(422).send("User not found by that ID")
+        res.status(404).send("User not found by that ID")
 }})
 
 app.patch('/users/:userid', passport.authenticate('basic', { session: false}), (req, res) => {
@@ -158,7 +158,7 @@ app.patch('/users/:userid', passport.authenticate('basic', { session: false}), (
         if (valid.error) { throw valid.error.message }
     }
     catch (err) {
-        res.status(422).send(err)
+        res.status(422).send("Invalid information format")
     }
 
     let result = users.some(user => user.id == req.params.userid)
@@ -177,7 +177,7 @@ app.patch('/users/:userid', passport.authenticate('basic', { session: false}), (
             }
         }
     } else {  
-        res.status(422).send("User not found by that ID") 
+        res.status(404).send("User not found by that ID") 
     }
 })
 
@@ -189,7 +189,7 @@ app.patch('/:userid/posts/:itemid', passport.authenticate('basic', { session: fa
         if (valid.error) { throw valid.error.message }
     }
     catch (err) {
-        res.status(422).send(err) 
+        res.status(422).send("Invalid information format") 
     } 
 
     let userResult = users.some(user => user.id == req.params.userid)
@@ -209,10 +209,10 @@ app.patch('/:userid/posts/:itemid', passport.authenticate('basic', { session: fa
                 } 
             }
         } else { 
-            res.status(422).send("Post not found by that ID")
+            res.status(404).send("Post not found by that ID")
         }
     } else { 
-        res.status(422).send("User not found by that ID")
+        res.status(404).send("User not found by that ID")
     }
 })
 
@@ -229,15 +229,13 @@ app.delete('/:userid/posts/:itemid', passport.authenticate('basic', { session: f
                 } 
             }
         } else { 
-            res.status(422).send("Post not found by that ID")
+            res.status(404).send("Post not found by that ID")
         }
     } else { 
-        res.status(422).send("User not found by that ID")
+        res.status(404).send("User not found by that ID")
     }
 }) 
 
-//  users.some(user => user.id == req.params.userid
-//app.getposts by date, category, location
 app.get('/posts/:search', (req, res) => {
     let tempArr = [] 
         for (const post of posts) {
