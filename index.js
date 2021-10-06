@@ -141,7 +141,7 @@ app.post('/:userid/createPost', passport.authenticate('basic', { session: false}
 
                 posts.push(newPost)
                 console.log(posts.length) 
-                res.status(200).send("New post created\n", newPost)
+                res.status(200).send("New post created\n")
                 break 
             }
         }  
