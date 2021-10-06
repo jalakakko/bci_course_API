@@ -11,7 +11,7 @@ const app = express()
 app.use(bodyParser.json())
 
 
-const port = process.env.PORT
+const port = process.env.PORT || 80
 const saltRounds = 8  
 let users = []
 let posts = []
