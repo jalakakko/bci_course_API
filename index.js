@@ -80,12 +80,14 @@ app.post('/signup', (req, res) => {
             }
         }  
         users.push(user) 
-        res.status(201).send("New user created") 
+        res.status(201).send(user) 
     } 
     catch (err) {
         res.status(422).send(err)
     }
 }) 
+
+
 
 app.get('/posts', (req, res) => {
     res.status(200).send(posts)
