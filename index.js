@@ -11,7 +11,7 @@ const app = express()
 app.use(bodyParser.json())
 
 
-const port = 3000
+const port = process.env.PORT
 const saltRounds = 8  
 let users = []
 let posts = []
@@ -86,10 +86,6 @@ app.post('/signup', (req, res) => {
         res.status(422).send(err)
     }
 }) 
-
-app.get('/users', (req, res) => { 
-    res.status(200).send(users)
-})
 
 app.get('/posts', (req, res) => {
     res.status(200).send(posts)
@@ -252,7 +248,7 @@ let serverInstance = null
 module.exports = {
     start: function() {
         serverInstance = app.listen(port, () => {
-            console.log(`listening at http://localhost:${port}`)
+            console.log(`listening at ${port}`)
         })
     },
     close: function() {
