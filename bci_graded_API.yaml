@@ -1,0 +1,440 @@
+openapi: 3.1.0
+info:
+  title: bci_graded_API
+  version: '1.0'
+  contact:
+    name: Ville Kovalainen
+  description: 'API for creating account, creating posts, modifying posts, listing posts'
+  summary: graded exercise API for BCI course
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  /signup:
+    post:
+      summary: Create a new user
+      operationId: post-signup
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  username:
+                    type: string
+                  password:
+                    type: string
+                  contactInfo:
+                    type: object
+                    properties:
+                      firstName:
+                        type: 'null'
+                      secondName:
+                        type: 'null'
+                      email:
+                        type: 'null'
+                      phoneNumber:
+                        type: 'null'
+                  location:
+                    type: object
+                    properties:
+                      country:
+                        type: 'null'
+                      city:
+                        type: 'null'
+                      address:
+                        type: 'null'
+                      postCode:
+                        type: 'null'
+              examples:
+                example-1:
+                  value:
+                    id: 0a268afa-3aa3-4948-bde8-85b12b36983d
+                    username: foo123
+                    password: '****'
+                    contactInfo:
+                      firstName: null
+                      secondName: null
+                      email: null
+                      phoneNumber: null
+                    location:
+                      country: null
+                      city: null
+                      address: null
+                      postCode: null
+        '422':
+          description: Username already taken
+      description: endpoint for creating new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  minLength: 6
+                  maxLength: 18
+                  description: Accept only alphanum format
+                password:
+                  type: string
+                  minLength: 8
+                  maxLength: 16
+                  pattern: '^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$€%!¤%&^])'
+              required:
+                - username
+                - password
+            examples:
+              example-1:
+                value:
+                  username: foo1234
+                  password: Bar1234!
+        description: ''
+  '/{userid}/createPost':
+    parameters:
+      - schema:
+          type: string
+        name: userid
+        in: path
+        required: true
+        description: users unique identifier
+    post:
+      summary: Create a new post
+      operationId: post-userid-createPost
+      responses:
+        '200':
+          description: New post created
+        '404':
+          description: User not found by that ID
+        '422':
+          description: You need to have personal informations filled
+      description: endpoint for creating new post with specific user
+      security:
+        - passport-http: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                price:
+                  type: number
+                deliveryType:
+                  type: string
+                  enum:
+                    - shipping
+                    - pickup
+                category:
+                  type: string
+                  enum:
+                    - cars
+                    - clothing
+                    - gardening
+                    - toys
+                    - electronic
+              required:
+                - title
+                - description
+                - price
+                - deliveryType
+                - category
+            examples:
+              example-1:
+                value:
+                  title: example title
+                  description: example description
+                  price: 55.98
+                  deliveryType: pickup
+                  category: electronic
+        description: ''
+  '/users/{userid}':
+    parameters:
+      - schema:
+          type: string
+        name: userid
+        in: path
+        required: true
+        description: users unique identifier
+    patch:
+      summary: Modify users information
+      operationId: patch-users-userid
+      responses:
+        '200':
+          description: Information modified
+        '404':
+          description: User not found by that ID
+        '422':
+          description: Invalid information format
+      description: 'endpoint for modifying users contact info and location '
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                  description: Accept only alphanum format
+                secondName:
+                  type: string
+                  description: Accept only alphanum format
+                email:
+                  type: string
+                  description: >-
+                    MinDomainSegments 2 and allows 'com', 'net', 'org', 'edu'
+                    and 'fi' TLDs only
+                  format: email
+                phoneNumber:
+                  type: string
+                  minLength: 8
+                  maxLength: 11
+                country:
+                  type: string
+                  description: Accept only alphanum format
+                city:
+                  type: string
+                  description: Accept only alphanum format
+                address:
+                  type: string
+                postcode:
+                  type: string
+            examples:
+              example-1:
+                value:
+                  firstName: John
+                  secondName: Doe
+                  email: johndoe@foobar.org
+                  phoneNumber: '0400123456'
+                  country: finland
+                  city: oulu
+                  address: professorintie 7
+                  postcode: '90220'
+        description: Passes information given to specific users null fields
+      security:
+        - passport-http: []
+    get:
+      summary: Get specific users information
+      operationId: get-users-userid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  username:
+                    type: string
+                  password:
+                    type: string
+                  contactInfo:
+                    type: object
+                    properties:
+                      firstName:
+                        type:
+                          - string
+                          - 'null'
+                      secondName:
+                        type:
+                          - string
+                          - 'null'
+                      email:
+                        type:
+                          - string
+                          - 'null'
+                      phoneNumber:
+                        type:
+                          - string
+                          - 'null'
+                  location:
+                    type: object
+                    properties:
+                      country:
+                        type:
+                          - string
+                          - 'null'
+                      city:
+                        type:
+                          - string
+                          - 'null'
+                      address:
+                        type:
+                          - string
+                          - 'null'
+                      postocode:
+                        type:
+                          - string
+                          - 'null'
+              examples:
+                example-1:
+                  value:
+                    id: 5cefe131-f023-480f-9664-eafe30d357b5
+                    username: foo1234
+                    password: '****'
+                    contactInfo:
+                      firstName: John
+                      secondName: Doe
+                      email: johndoe@foobar.org
+                      phoneNumber: '0400123456'
+                    location:
+                      country: finland
+                      city: oulu
+                      address: professorintie 7
+                      postcode: '90220'
+        '404':
+          description: User not found by that ID
+  '/{userid}/posts/{itemid}':
+    parameters:
+      - schema:
+          type: string
+        name: userid
+        in: path
+        required: true
+        description: users unique identifier
+      - schema:
+          type: string
+        name: itemid
+        in: path
+        required: true
+        description: items unique identifier
+    patch:
+      summary: Modify specific users post by ID
+      operationId: patch-userid-posts-itemid
+      responses:
+        '200':
+          description: Information modified
+        '404':
+          description: Post/User not found by that ID
+        '422':
+          description: Invalid information format
+      security:
+        - passport-http: []
+      description: endpoint for modifying specific users post by ID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                price:
+                  type: number
+                deliveryType:
+                  type: string
+                  enum:
+                    - shipping
+                    - pickup
+                category:
+                  type: string
+                  enum:
+                    - cars
+                    - clothing
+                    - gardening
+                    - toys
+                    - electronic
+              required:
+                - title
+                - description
+                - price
+                - deliveryType
+                - category
+            examples:
+              example-1:
+                value:
+                  title: example modified title
+                  description: example modified description
+                  price: 60
+                  deliveryType: shipping
+                  category: cars
+    delete:
+      summary: Delete specific users post by ID
+      operationId: delete-userid-posts-itemid
+      responses:
+        '200':
+          description: Post deleted successfully
+        '404':
+          description: Post/User not found by that ID
+      description: endpoint for deleting specific users post by ID
+      security:
+        - passport-http: []
+  '/posts/{search}':
+    parameters:
+      - schema:
+          type: string
+        name: search
+        in: path
+        required: true
+        description: search parameter
+    get:
+      summary: Get posts by search parameter
+      tags: []
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: array
+                description: Array of found posts
+                items: {}
+              examples:
+                example-1:
+                  value:
+                    - id: aae52d47-79da-4099-b634-3496c2a9437e
+                      postersId: 5cefe131-f023-480f-9664-eafe30d357b5
+                      title: '555'
+                      description: putki
+                      category: toys
+                      location:
+                        country: finland
+                        city: oulu
+                        address: professorintie 7
+                        postcode: '90220'
+                      price: 20
+                      postDate: 6-10-2021
+                      deliveryType: pickup
+                      contactInfo:
+                        firstName: John
+                        secondName: Doe
+                        email: johndoe@foobar.org
+                        phoneNumber: '0400123456'
+      operationId: get-posts-search
+      description: endpoint for getting posts by search parameter
+  /posts:
+    get:
+      summary: Get all posts
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: Array of all posts
+                items: {}
+              examples:
+                example-1:
+                  value:
+                    - null
+      operationId: get-posts
+      description: endpoint for getting all posts
+components:
+  schemas: {}
+  securitySchemes:
+    passport-http:
+      type: http
+      scheme: basic
