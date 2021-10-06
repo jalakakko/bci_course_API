@@ -87,10 +87,6 @@ app.post('/signup', (req, res) => {
     }
 }) 
 
-app.get('/users', (req, res) => { 
-    res.status(200).send(users)
-})
-
 app.get('/posts', (req, res) => {
     res.status(200).send(posts)
 })
