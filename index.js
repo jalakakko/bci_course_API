@@ -87,10 +87,22 @@ app.post('/signup', (req, res) => {
     }
 }) 
 
-
-
 app.get('/posts', (req, res) => {
     res.status(200).send(posts)
+})
+
+app.get('/user/:userid', (req, res) => {
+    let result = users.some(user => user.id == req.params.userid)
+    if (result) {  
+        for (const user of users) { 
+            console.log(user)
+            if (user.id == req.params.userid) { 
+                res.status(200).send(user) 
+            }
+        }  
+    } else { 
+        res.status(422).send("User not found by that ID")
+    }
 })
 
 app.post('/:userid/createPost', passport.authenticate('basic', { session: false}), (req, res) => {
@@ -129,7 +141,7 @@ app.post('/:userid/createPost', passport.authenticate('basic', { session: false}
 
                 posts.push(newPost)
                 console.log(posts.length) 
-                res.status(200).send("New post created")
+                res.status(200).send("New post created\n", newPost)
                 break 
             }
         }  
