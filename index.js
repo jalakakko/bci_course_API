@@ -25,8 +25,6 @@ timeStampper = () => {
 }
  
 passport.use(new BasicStrategy( (username, password, done) => {
-    console.log('Basic strategy params, username ' + username + ', password ' + password)  
-    
     const searchResult = users.find(user => {
         if(user.username === username) {
             if(bcrypt.compareSync(password, user.password)){
@@ -85,7 +83,6 @@ app.post('/signup', (req, res) => {
         res.status(201).send("New user created") 
     } 
     catch (err) {
-        console.error(err)
         res.status(422).send(err)
     }
 }) 
@@ -106,7 +103,6 @@ app.post('/:userid/createPost', passport.authenticate('basic', { session: false}
         if (valid.error) { throw valid.error.message }
     }
     catch (err) {
-        console.error(err)
         res.status(422).send(err) 
     } 
     
@@ -150,7 +146,6 @@ app.patch('/users/:userid', passport.authenticate('basic', { session: false}), (
         if (valid.error) { throw valid.error.message }
     }
     catch (err) {
-        console.error(err)
         res.status(422).send(err)
     }
 
@@ -182,7 +177,6 @@ app.patch('/:userid/posts/:itemid', passport.authenticate('basic', { session: fa
         if (valid.error) { throw valid.error.message }
     }
     catch (err) {
-        console.error(err)
         res.status(422).send(err) 
     } 
 
@@ -252,9 +246,7 @@ app.get('/posts/:search', (req, res) => {
         res.status(200).send(tempArr)
 })
 
-app.listen(port, () => {
-    console.log(`listening at http://localhost:${port}`)
-})
+
 
 let serverInstance = null
 module.exports = {
@@ -265,5 +257,6 @@ module.exports = {
     },
     close: function() {
         serverInstance.close()
-    }
+    },
+    users, posts
 }
