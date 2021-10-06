@@ -5,7 +5,7 @@ const chaiHttp = require('chai-http');
 const { users, posts } = require('../index');
 chai.use(chaiHttp);
 
-const ADDRESS = 'http://localhost:3000'
+const ADDRESS = 'http://localhost:80'
 let validUser;
 let validPost;
 
